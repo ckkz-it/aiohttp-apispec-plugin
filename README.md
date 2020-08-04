@@ -1,5 +1,7 @@
 # aiohttp-apispec-plugin
 
+[![PyPI](https://img.shields.io/pypi/v/aiohttp-apispec-plugin.svg)](https://pypi.org/project/aiohttp-apispec-plugin/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Lightweight [apispec](https://github.com/marshmallow-code/apispec) plugin that generates OpenAPI specification  for [aiohttp](https://docs.aiohttp.org/en/stable/) web applications.
 
 

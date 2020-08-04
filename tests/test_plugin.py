@@ -101,7 +101,7 @@ class TestPathHelpers:
             "description": "Route Dummy Description",
             "responses": {"201": {"description": "Route Response Description"}},
         }
-        app.router.add_route("POST", "/dummy", dummy_handler)
+        app.router.add_post("/dummy", dummy_handler)
         spec = get_spec(app)
         spec.path(resource=dummy_handler)
         assert spec._paths["/dummy"]["post"] == expected
