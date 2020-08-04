@@ -1,13 +1,13 @@
 from setuptools import setup
 
-from aiohttp_apispec_plugin import __version__
+from aiohttp_apispec_plugin.version import version
 
 with open("README.md") as f:
     long_description = f.read()
 
 setup(
     name="aiohttp_apispec_plugin",
-    version=__version__,
+    version=version,
     url="https://github.com/ckkz-it/aiohttp-apispec-plugin",
     license="MIT",
     author="Andrey Laguta",
@@ -17,7 +17,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords="aiohttp apispec aiohttp_apispec_plugin",
-    packages=["aiohttp_rest_framework"],
+    packages=["aiohttp_apispec_plugin"],
     python_requires=">=3.6",
     install_requires=[
         "aiohttp",
