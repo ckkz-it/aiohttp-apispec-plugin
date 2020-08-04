@@ -8,41 +8,42 @@ from aiohttp_apispec_plugin.utils import issubclass_safe
 
 class AioHttpPlugin(BasePlugin):
     """APISpec plugin for AioHttp"""
-    view_uri_mapping: dict
+    resource_uri_mapping: dict
 
     def __init__(self, app: web.Application):
         super().__init__()
-        self.view_uri_mapping = self._generate_view_uri_mapping(app)
+        self.resource_uri_mapping = self._generate_resource_uri_mapping(app)
 
-    def path_helper(self, view, operations, path=None, **kwargs):
-        operations.update(yaml_utils.load_operations_from_docstring(view.__doc__) or {})
-        path = path or self.view_uri_mapping[view]["uri"]
+    def path_helper(self, resource, operations, path=None, **kwargs):
+        print(self.resource_uri_mapping)
+        operations.update(yaml_utils.load_operations_from_docstring(resource.__doc__) or {})
+        path = path or self.resource_uri_mapping[resource]["uri"]
 
-        methods = self.view_uri_mapping[view]["methods"]
+        methods = self.resource_uri_mapping[resource]["methods"]
 
         for method_name, method_handler in methods.items():
             docstring_yaml = yaml_utils.load_yaml_from_docstring(method_handler.__doc__)
             operations[method_name] = docstring_yaml or {}
         return path
 
-    def _generate_view_uri_mapping(self, app: web.Application) -> dict:
+    def _generate_resource_uri_mapping(self, app: web.Application) -> dict:
         routes = app.router.routes()
         mapping = {}
         for route in routes:
             uri = self._get_uri(route)
-            view = route.handler
-            mapping[view] = {
+            resource = route.handler
+            mapping[resource] = {
                 "uri": uri,
                 "methods": {},
             }
-            if issubclass_safe(route, web.View):
-                for attr in dir(view):
+            if issubclass_safe(resource, web.View):
+                for attr in dir(resource):
                     if attr.upper() in METH_ALL:
-                        mapping[view]["methods"][attr] = getattr(view, attr)
+                        mapping[resource]["methods"][attr] = getattr(resource, attr)
             else:
                 method = route.method.lower()
-                view = route.handler
-                mapping[view]["methods"][method] = view
+                resource = route.handler
+                mapping[resource]["methods"][method] = resource
 
         return mapping
 
