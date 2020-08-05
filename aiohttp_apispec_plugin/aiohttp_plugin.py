@@ -7,15 +7,14 @@ from aiohttp_apispec_plugin.utils import issubclass_safe
 
 
 class AioHttpPlugin(BasePlugin):
-    """APISpec plugin for AioHttp"""
+    """APISpec plugin for aiohttp"""
     resource_uri_mapping: dict
 
     def __init__(self, app: web.Application):
         super().__init__()
         self.resource_uri_mapping = self._generate_resource_uri_mapping(app)
 
-    def path_helper(self, resource, operations, path=None, **kwargs):
-        print(self.resource_uri_mapping)
+    def path_helper(self, resource, operations, path=None, **kwargs) -> str:
         operations.update(yaml_utils.load_operations_from_docstring(resource.__doc__) or {})
         path = path or self.resource_uri_mapping[resource]["uri"]
 
@@ -42,7 +41,6 @@ class AioHttpPlugin(BasePlugin):
                         mapping[resource]["methods"][attr] = getattr(resource, attr)
             else:
                 method = route.method.lower()
-                resource = route.handler
                 mapping[resource]["methods"][method] = resource
 
         return mapping
