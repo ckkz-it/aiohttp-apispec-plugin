@@ -134,6 +134,85 @@ spec.path(resource=get_user)
 print(spec.to_yaml())  # same behavior
 ```
 
+#### With [dataclasses](https://github.com/s-knibbs/dataclasses-jsonschema) plugin
+
+```python
+from dataclasses import dataclass
+from aiohttp import web
+from aiohttp_apispec_plugin import AioHttpPlugin
+from apispec import APISpec
+from dataclasses_jsonschema import JsonSchemaMixin
+from dataclasses_jsonschema.apispec import DataclassesPlugin
+
+@dataclass
+class User(JsonSchemaMixin):
+    """User Schema"""
+    id: int
+    username: str
+
+async def get_user(request: web.Request) -> web.Response:
+    """User Detail View
+    ---
+    summary: Get User
+    description: Get User Data For Given `user_id`
+    responses:
+      200:
+        description: Successfully retrieved user details
+        content:
+            application/json:
+                schema: User
+    """
+
+app = web.Application()
+app.router.add_get("/api/v1/users/{user_id}", get_user)
+
+spec = APISpec(
+    title="AioHttp Application",
+    version="1.0.0",
+    openapi_version="3.0.3",
+    plugins=[
+        AioHttpPlugin(app),
+        DataclassesPlugin(),
+    ],
+)
+
+spec.components.schema("User", schema=User)
+spec.path(resource=get_user)
+
+print(spec.to_yaml())
+"""
+components:
+  schemas:
+    User:
+      description: User Schema
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+      required:
+      - id
+      - username
+      type: object
+info:
+  title: AioHttp Application
+  version: 1.0.0
+openapi: 3.0.3
+paths:
+  /api/v1/users/{user_id}:
+    get:
+      description: Get User Data For Given `user_id`
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: Successfully retrieved user details
+      summary: Get User
+"""
+```
+
 ## Requirements
 
 Python >= 3.6
@@ -147,3 +226,4 @@ Python >= 3.6
 ## Other libs to check
 - [aiohttp-apispec](https://github.com/maximdanilchenko/aiohttp-apispec)
 - [falcon-apispec](https://github.com/alysivji/falcon-apispec)
+- [dataclasses-jsonschema](https://github.com/s-knibbs/dataclasses-jsonschema)
